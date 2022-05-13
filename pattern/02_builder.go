@@ -6,7 +6,7 @@ import "fmt"
 //Он позволяет создавать сложные объекты пошагово. Мы выносим конструирование объекта за пределы его собственного класса,
 //порчив это отдельным классам(строителям). Мы разбиваем процесс на отдельные шаги, поочередно вызывая методы строителя.
 
-type builder interface {//интерфейс строителя 
+type builder interface {//интерфейс строителя
 	setCustomerName(name string)
 	setCustomerDiscount(discount int)
 	getCustomer() customer
@@ -17,9 +17,9 @@ func getBuilder(builderType string) builder {//выбор строителя д�
 	switch builderType {
 	case "vip":
 		return &vipBuilder{}
-	case "normal": 
+	case "normal":
 		return &normalBuilder{}
-	default: 
+	default:
 		return nil
 	}
 }
@@ -30,7 +30,7 @@ type vipBuilder struct {
 	discount int
 }
 
-func newVipBuilder() *vipBuilder{//конструктор для Вип-строителя
+func newVipBuilder() *vipBuilder{ //конструктор для Вип-строителя
 	return &vipBuilder{}
 
 }
@@ -45,18 +45,18 @@ func (v *vipBuilder) setCustomerDiscount(discount int) {
 
 func (v *vipBuilder) getCustomer() customer {
 	return customer{
-		name: v.name,
+		name:     v.name,
 		discount: v.discount,
 	}
 }
 
 //Строитель для обычных клиентов, у которых скидка = 0
 type normalBuilder struct {
-	name string
+	name     string
 	discount int
 }
 
-func newNormalBuilder() *vipBuilder{//конструктор для обычного строителя
+func newNormalBuilder() *vipBuilder { //конструктор для обычного строителя
 	return &vipBuilder{}
 
 }
@@ -71,14 +71,13 @@ func (v *normalBuilder) setCustomerDiscount(discount int) {
 
 func (n *normalBuilder) getCustomer() customer {
 	return customer{
-		name: n.name,
+		name:     n.name,
 		discount: 0,
 	}
 }
 
-type director struct {//иногда при использовании данного ШП используется Директор, который задает последовательность выполнения шагов
+type director struct { //иногда при использовании данного ШП используется Директор, который задает последовательность выполнения шагов
 	builder builder
-
 }
 
 func newDirector(b builder) *director {
@@ -91,33 +90,30 @@ func (d *director) setBuilder(b builder) {
 	d.builder = b
 }
 
-func (d *director) newCustomer(name string, discount int) customer{
+func (d *director) newCustomer(name string, discount int) customer {
 	d.builder.setCustomerName(name)
 	d.builder.setCustomerDiscount(discount)
 	return d.builder.getCustomer()
 
 }
 
-
-type customer struct{
-	name string
+type customer struct {
+	name     string
 	discount int
-
 }
 
 func main() {
-	vipBuilder:=getBuilder("vip")
-	normalBuilder:=getBuilder("normal")
+	vipBuilder := getBuilder("vip")
+	normalBuilder := getBuilder("normal")
 
-	director:=newDirector(vipBuilder)
-	vipCustomer:=director.newCustomer("Kirill", 99)
+	director := newDirector(vipBuilder)
+	vipCustomer := director.newCustomer("Kirill", 99)
 
 	fmt.Println("VIP:", vipCustomer.name, "discount:", vipCustomer.discount)
 
 	director = newDirector(normalBuilder)
-	normalCustomer:=director.newCustomer("Vlad", 0)
+	normalCustomer := director.newCustomer("Vlad", 0)
 
-	fmt.Println(normalCustomer.name, "discount:", normalCustomer.discount )
-
+	fmt.Println(normalCustomer.name, "discount:", normalCustomer.discount)
 
 }
