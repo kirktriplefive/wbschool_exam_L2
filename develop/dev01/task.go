@@ -12,7 +12,7 @@ import (
 )
 
 func currentTime() error {
-	time, err := ntp.Time("0.beevik-ntp.pool.ntp.org")
+	time, err := ntp.Time("0.beevik-ntp.pool.ntp.org")//возвращает время используя информацию с удаленного сервера
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v ", err)
 		os.Exit(1)

@@ -16,24 +16,24 @@ func unpack(str string) string {
 	var builder strings.Builder
 	reader := strings.NewReader(str)
 	char, _, _ := reader.ReadRune()
-	if unicode.IsDigit(char) {
+	if unicode.IsDigit(char) {//проверка на число
 		return ""
 	}
 	for {
-		currentChar, _, errForRead := reader.ReadRune(); 
+		currentChar, _, errForRead := reader.ReadRune(); //считываем руны
 		if errForRead != nil {
-			builder.WriteRune(char)
+			builder.WriteRune(char)//пишем предыдущий считанный символ
 			break
 		}
 
-		digit, err := strconv.Atoi(string(currentChar))
+		digit, err := strconv.Atoi(string(currentChar))//в инт
 		if err == nil {
-			builder.WriteString(strings.Repeat(string(char), digit))
+			builder.WriteString(strings.Repeat(string(char), digit))//если перевелось, то выводим предыдущий символ digit раз
 		} else {
 			builder.WriteRune(char)
 		}
 
-		if string(char) == `\` || err == nil {
+		if string(char) == `\` || err == nil {//проверка на \
 			char, _, err = reader.ReadRune()
 			if errForRead != nil {
 				break
