@@ -9,7 +9,7 @@ import (
 )
 
 type EventService struct {
-	storage storage.Storage
+	storage *storage.Storage
 }
 
 // func NewEventService(storage storage.Storage) *EventService {

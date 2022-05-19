@@ -19,5 +19,5 @@ type Service struct {
 }
 
 func NewService(storage *storage.Storage) *Service {
-	return &Service{&EventService{*storage}}
+	return &Service{&EventService{storage}}
 }
