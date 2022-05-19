@@ -5,7 +5,7 @@ import "fmt"
 //поведенческий шаблон проектирования, описывающий операцию, которая выполняется над объектами других классов. 
 //При изменении visitor нет необходимости изменять обслуживаемые классы.
 
-type person interface{//интерфейс человека
+type person interface{ //интерфейс человека
 	getPersonType() string
 	accept(visitor)
 }
@@ -51,7 +51,7 @@ func (s *salaryGetter) getDirector(d *director) {
 	fmt.Println("Итоговая зарплата разработчика", salary)
 } 
 
-type activityGetter struct {
+type activityGetter struct {//определенный посетитель для того, чтобы узнать чем занимается человек
 	activity string
 }
 

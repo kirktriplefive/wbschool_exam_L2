@@ -45,7 +45,7 @@ type signup struct{
 func (s *signup) execute(user *user) {
 	user.is_signup=true
 	fmt.Println("Теперь вы зарегистрированы и сейчас будет произведен вход в систему")
-	user.is_login = true
+	user.is_login =true
 }
 
 func (s *signup) nextProc(processor processor) {//Установка следующего обработчика в цепочке, в нашей задаче необязательно, но удобно для расширения количества обработчиков
@@ -63,7 +63,7 @@ func main() {
 
 	login.nextProc(signup)
 
-	user:=&user{is_login: false, is_signup: true}
+	user:=&user{is_login: true, is_signup: false}
 
 	login.execute(user)
 	login.execute(user)

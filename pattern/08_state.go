@@ -177,7 +177,7 @@ func (d *department) protectionTask() error {
 }
 
 func main() {
-	trainee := newTrainee(true, false)
+	trainee := newTrainee(false, false)
 	if err := trainee.performingTask(); err != nil {
 		fmt.Println(err)
 	}
