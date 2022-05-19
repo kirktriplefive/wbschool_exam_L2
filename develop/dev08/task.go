@@ -18,10 +18,10 @@ func main() {
 		hat()
 		line, _ := reader.ReadString('\n')
 
-		if line == "exit\n" {
+		if line == "exit\n" {// выход 
 			break
 		}
-		if line == "\n" {
+		if line == "\n" {// продолжаем работу
 			continue
 		}
 
@@ -30,7 +30,7 @@ func main() {
 }
 
 func handle(line string) {
-	subdata := strings.Split(line, fork)
+	subdata := strings.Split(line, fork)//разбиваем на массив строк, для поддержки &
 	for i := range subdata {
 		ret, _, err := syscall.Syscall(syscall.SYS_FORK, 0, 0, 0)
 		if err != 0 {
