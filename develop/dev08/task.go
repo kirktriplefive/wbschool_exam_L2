@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+
 	"github.com/mitchellh/go-ps"
 )
 
@@ -17,14 +18,12 @@ func main() {
 		reader := bufio.NewReader(os.Stdin)
 		hat()
 		line, _ := reader.ReadString('\n')
-
 		if line == "exit\n" {// выход 
 			break
 		}
 		if line == "\n" {// продолжаем работу
 			continue
 		}
-
 		handle(line[:len(line)-1])
 	}
 }
@@ -32,33 +31,22 @@ func main() {
 func handle(line string) {
 	subdata := strings.Split(line, fork)//разбиваем на массив строк, для поддержки &
 	for i := range subdata {
-		ret, _, err := syscall.Syscall(syscall.SYS_FORK, 0, 0, 0)
-		if err != 0 {
-			os.Exit(2)
-		}
-		if ret == 0 && len(subdata) == 1 {
-			// потомок, умирает если & не имеются
-			os.Exit(0)
-		}
 
-		if ret == 0 || len(subdata) == 1 {
+		if len(subdata) == 1 {
 			// потомок, если & имеются
 			data := strings.Split(subdata[i], delim)
 			rez := " "
 			for j := range data {
 				var err error
-
 				rez, err = shell(data[j] + rez)
 				if err != nil {
-					println(err)
+					fmt.Println(err)
 				}
 			}
 			if len(rez) > 1 {
-				fmt.Println(rez[1:])
+				fmt.Println(rez)
 			}
-			if ret == 0 {
-				os.Exit(0)
-			}
+
 		}
 	}
 }
