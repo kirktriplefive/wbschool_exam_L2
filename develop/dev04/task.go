@@ -6,24 +6,26 @@ import (
 	"strings"
 )
 
+//Написать функцию поиска всех множеств анаграмм по словарю. 
+
+
 func getAnagrams(arr *[]string) *map[string][]string {
 	result := make(map[string][]string)
 	testArr := *arr
-	//fmt.Println(len(testArr))
 	for i, s := range testArr {
-		result[s] = append(result[s], s)
+		result[s] = append(result[s], s)//добавляем слово в мапку и слово становится ключом
 		r := len(testArr)
 		for j := i + 1; j <= r-1; {
-			f, num := isAnagram(s, testArr[j])
+			f, num := isAnagram(s, testArr[j])//проверяем ялвется ли предыдущее слово и текущее анаграммами
 			testArr[j] = strings.ToLower(testArr[j])
-			if f && num == 2 {
-				result[s] = append(result[s], testArr[j])
+			if f && num == 2 {//является
+				result[s] = append(result[s], testArr[j])//добавлеям в мап по ключу - первому слову
 				copy(testArr[j:], testArr[j+1:])
-				testArr[len(testArr)-1] = ""
+				testArr[len(testArr)-1] = ""//удаляем из слайса сохраняя последовательность
 				testArr = testArr[:len(testArr)-1]
-			} else if f && num == 1 {
+			} else if f && num == 1 {//слово повторилось
 				copy(testArr[j:], testArr[j+1:])
-				testArr[len(testArr)-1] = ""
+				testArr[len(testArr)-1] = ""//удаляем слово
 				testArr = testArr[:len(testArr)-1]
 			} else if !f {
 				j++
@@ -33,7 +35,7 @@ func getAnagrams(arr *[]string) *map[string][]string {
 	}
 	for key := range result {
 		if len(result[key]) == 1 || key == "" {
-			delete(result, key)
+			delete(result, key) //удаляем элементы с одним словом
 		}
 		sort.Strings(result[key])
 	}
@@ -60,7 +62,6 @@ func isAnagram(original, test string) (bool, int) {
 	testOut := sortString(strings.ToLower(strings.Join(strings.Fields(test), "")))
 	// Сравниваем отсортированные строки, если True, то это анаграмма
 	if strOut == testOut {
-		//fmt.Println(strOut, ""+testOut)
 		return true, 2
 	} else {
 		return false, 0

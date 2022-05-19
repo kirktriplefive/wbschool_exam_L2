@@ -21,7 +21,7 @@ func NewEvent(title string, date time.Time) (*Event, error) {//Конструк�
 			Date: date,
 		}, nil
 	} else {
-		return nil, fmt.Errorf("Пустая заметка", title)
+		return nil, fmt.Errorf("Пустая заметка %s", title)
 	}
 
 }

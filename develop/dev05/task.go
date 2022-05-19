@@ -7,10 +7,79 @@ import (
 	"strings"
 )
 
+// Реализовать утилиту фильтрации по аналогии с консольной утилитой (man grep — смотрим описание и основные параметры).
+
+
+func main() {
+	var a int
+	var b int
+	var c int
+	flag.IntVar(&a, "A", 0, "печатать +N строк после совпадения")
+	flag.IntVar(&b, "B", 0, "печатать +N строк до совпадения")
+	flag.IntVar(&c, "C", 0, "(A+B) печатать ±N строк вокруг совпадения")
+	useCount := flag.Bool("c", false, "количество строк")
+	useIgnore := flag.Bool("i", false, "вместо совпадения, исключать")
+	useFixed := flag.Bool("F", false, "точное совпадение со строкой, не паттерн")
+	useLineNum := flag.Bool("n", false, "напечатать номер строки")
+	flag.Parse()// парсим флаги
+	if str := flag.Arg(0); str != "" {// считываем строку для работы
+		if filename := flag.Arg(1); filename != "" {// берем имя файла
+			data, err := ioutil.ReadFile(filename) // читаем файл
+			strs := strings.Split(string(data), "\n") // записываем строки из файла в массив
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				if *useFixed {// если нужно точное совпадение со строкой
+					r := grepFuncUseFixed(strs, str)
+					for _, res := range r {
+						fmt.Println(res)
+					}
+				} else { // иначе ищем подстроку в строках
+					resNorm, resInvert, err := (grepFunc(strs, a, b, c, str))
+					if err != nil {
+						fmt.Println(err)
+					} else {
+						if *useIgnore && *useLineNum {
+							for key, str := range resInvert {
+								res := strings.Join(str, " ")
+								fmt.Println(key+1, res)
+							}
+						} else if *useIgnore && *useCount {
+							fmt.Println(len(resInvert))
+						} else if *useIgnore {
+							for _, str := range resInvert {
+								res := strings.Join(str, " ")
+								fmt.Println(res)
+							}
+						} else if *useCount {
+							fmt.Println(len(resNorm))
+						} else if *useLineNum {
+							for key, str := range resNorm {
+								res := strings.Join(str, " ")
+								fmt.Println(key+1, res)
+							}
+						} else {
+							for _, str := range resNorm {
+								res := strings.Join(str, " ")
+								fmt.Println(res)
+							}
+						}
+					}
+
+				}
+			}
+
+		}
+
+	} else {
+		fmt.Println("Вы не ввели строку для фильтрации!")
+	}
+}
+
 func grepFuncUseFixed(strs []string, str string) map[int]string {
 	result := make(map[int]string)
 	for i, st := range strs {
-		if st == str {
+		if st == str {// если полностью совпадает
 			result[i] = str
 		}
 	}
@@ -99,71 +168,4 @@ func grepFunc(strs []string, a, b, c int, str string) (map[int][]string, map[int
 		return resultNorm, resultInvert, nil
 	}
 
-}
-
-func main() {
-	var a int
-	var b int
-	var c int
-	flag.IntVar(&a, "A", 0, "печатать +N строк после совпадения")
-	flag.IntVar(&b, "B", 0, "печатать +N строк до совпадения")
-	flag.IntVar(&c, "C", 0, "(A+B) печатать ±N строк вокруг совпадения")
-	useCount := flag.Bool("c", false, "количество строк")
-	useIgnore := flag.Bool("i", false, "вместо совпадения, исключать")
-	useFixed := flag.Bool("F", false, "точное совпадение со строкой, не паттерн")
-	useLineNum := flag.Bool("n", false, "напечатать номер строки")
-	flag.Parse()
-	if str := flag.Arg(0); str != "" {
-		if filename := flag.Arg(1); filename != "" {
-			data, err := ioutil.ReadFile(filename)
-			strs := strings.Split(string(data), "\n")
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				if *useFixed {
-					r := grepFuncUseFixed(strs, str)
-					for _, res := range r {
-						fmt.Println(res)
-					}
-				} else {
-
-					resNorm, resInvert, err := (grepFunc(strs, a, b, c, str))
-					if err != nil {
-						fmt.Println(err)
-					} else {
-						if *useIgnore && *useLineNum {
-							for key, str := range resInvert {
-								res := strings.Join(str, " ")
-								fmt.Println(key+1, res)
-							}
-						} else if *useIgnore && *useCount {
-							fmt.Println(len(resInvert))
-						} else if *useIgnore {
-							for _, str := range resInvert {
-								res := strings.Join(str, " ")
-								fmt.Println(res)
-							}
-						} else if *useCount {
-							fmt.Println(len(resNorm))
-						} else if *useLineNum {
-							for key, str := range resNorm {
-								res := strings.Join(str, " ")
-								fmt.Println(key+1, res)
-							}
-						} else {
-							for _, str := range resNorm {
-								res := strings.Join(str, " ")
-								fmt.Println(res)
-							}
-						}
-					}
-
-				}
-			}
-
-		}
-
-	} else {
-		fmt.Println("Вы не ввели строку для фильтрации!")
-	}
 }

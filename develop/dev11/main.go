@@ -14,20 +14,20 @@ import (
 
 func main() {
 	logrus.SetFormatter(new(logrus.JSONFormatter))
-	storage := storage.NewStorage()
-	service := service.NewService(storage)
-	handler := handler.NewHandler(service)
-	mux := initRouter(handler)
-	errChan := make(chan error)
-	if err := initConfig(); err != nil {
+	storage := storage.NewStorage()// инициализируем структуру Storage
+	service := service.NewService(storage)// инициализируем структуру Service
+	handler := handler.NewHandler(service)// инициализируем структуру Handler
+	mux := initRouter(handler) // инициализируем роутер
+	errChan := make(chan error) // канал для получения ошибок работы сервера
+	if err := initConfig(); err != nil { // инициализируем конфиг для того, чтобы узнать порт
 		logrus.Fatalf("error init config: %v", err)
 	}
 	go func() {
-		errChan <- http.ListenAndServe(viper.GetString("port"), mux)
+		errChan <- http.ListenAndServe(viper.GetString("port"), mux) // запускаем сервер
 	}()
 	var err error
 	select {
-	case err = <-errChan:
+	case err = <-errChan: // проверяем нет ли ошибок в работе сервера
 		if err != nil {
 			logrus.Error(err)
 			os.Exit(1)
@@ -38,7 +38,7 @@ func main() {
 
 func initRouter(h *handler.Handler) *http.ServeMux {
 	mux := &http.ServeMux{}
-	mux.HandleFunc("/create_event", middleware.Logging(http.HandlerFunc(h.Add)))
+	mux.HandleFunc("/create_event", middleware.Logging(http.HandlerFunc(h.Add))) // хэндлеры
 	mux.HandleFunc("/update_event", middleware.Logging(http.HandlerFunc(h.Update)))
 	mux.HandleFunc("/delete_event", middleware.Logging(http.HandlerFunc(h.Delete)))
 	mux.HandleFunc("/events_for_day", middleware.Logging(http.HandlerFunc(h.GetEventForDay)))

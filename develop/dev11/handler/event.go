@@ -15,12 +15,12 @@ type EventHandler struct {
 	service service.ServiceInterface
 }
 
-type Event struct {
+type Event struct { // структура события
 	Title string `json:"title"`
 	Date string `json:"date"`
 }
 
-type UpdateEvent struct {
+type UpdateEvent struct { // структура для обновления события
 	Title string `json:"title"`
 	Date string `json:"date"`
 	NewTitle string `json:"new_title"`
